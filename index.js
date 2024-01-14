@@ -1,9 +1,9 @@
 const app = require('./app/app');
 
 const User = require('./database/models/User');
-// const Order = require('./database/models/Order');
+const Notes = require('./database/models/Notes');
 
-// User.hasMany(Order, {foreignKey: 'userId'});
+User.hasMany(Notes, {foreignKey: 'userId'});
 
 app.get('/', function (req, res) {
   res.send('Hello World')

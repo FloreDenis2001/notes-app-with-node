@@ -15,7 +15,7 @@ const verifyToken = (req, res, next) => {
 
     jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
         if (err) {
-            return handleErrorResponse(res, err, 'Unauthorized - No valik token', 401)
+            return handleErrorResponse(res, err, `Unauthorized - No valid token ${token}`, 401)
         }
 
         req.userId = decoded.id;

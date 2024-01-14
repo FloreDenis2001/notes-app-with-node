@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../database/models/User');
 const { handleErrorResponse } = require('../utils');
 
+
 const router = express.Router();
 
 router.post('/login', async function (req, res) {
@@ -14,28 +15,59 @@ router.post('/login', async function (req, res) {
             where: {
                 email: email
             }
-        })
-        if (!user.email.endsWith("@stud.ase.ro")) {
-            if (!user) {
-                return res.status(404).json({ success: false, message: "User not found", data: {} })
-            }
-            return res.status(401).json({ success: true, message: "Invalid email", data: {} })
+        });
+
+        if (!user) {
+            return res.status(404).json({
+                id: 0,
+                email: "NOEMAIL",
+                token: "NOTOKEN",
+                success: false,
+                message: "User not found",
+                data: {}
+            });
         }
+
+        if (!user.email.endsWith("@stud.ase.ro")) {
+            return res.status(401).json({
+                id: 0,
+                email: "NOEMAIL",
+                token: "NOTOKEN",
+                success: false,
+                message: "Invalid email",
+                data: {}
+            });
+        }
+
         const validPassword = bcrypt.compareSync(password, user.dataValues.password);
 
         if (!validPassword) {
-            return res.status(401).json({ success: false, message: "Invalid password", data: {} })
+            return res.status(401).json({
+                id: 0,
+                email: "NOEMAIL",
+                token: "NOTOKEN",
+                success: false,
+                message: "Invalid password",
+                data: {}
+            });
         }
 
-        const token = jwt.sign({ id: user.dataValues.id }, process.env.TOKEN_SECRET, {
+        const uniqueSecret = `${process.env.TOKEN_SECRET}_${Date.now()}`;
+        
+        const token = jwt.sign({ id: user.dataValues.id }, uniqueSecret, {
             expiresIn: '1h'
-        })
+        });
 
-        res.status(200).json({ success: true, message: "User found", data: { token } })
+        res.status(200).json({
+            id: user.dataValues.id,
+            email: user.dataValues.email,
+            username: user.dataValues.username,
+            token: token,
+        });
     } catch (error) {
         handleErrorResponse(res, error, 'Error login user');
     }
-})
+});
 
 router.post('/check', async function (req, res) {
     const token = req.body.token;
