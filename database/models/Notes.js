@@ -12,10 +12,6 @@ const Notes = sequelize.define("Notes", {
     materie: Sequelize.STRING,
     tag: Sequelize.STRING,
     isTrash: Sequelize.BOOLEAN,
-    attachment: {
-        type: Sequelize.STRING, 
-        allowNull: true, 
-    }
 })
 
 module.exports = Notes;
