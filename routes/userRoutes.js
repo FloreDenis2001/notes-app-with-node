@@ -41,9 +41,20 @@ router.post('/addUser', async function (req, res) {
         const salt = bcrypt.genSaltSync(10);
         const hash = bcrypt.hashSync(password, salt);
 
+        const existingUser = await User.findOne({
+            where: {
+                email: email
+            }
+        });
+
+        if (existingUser) {
+            return res.status(400).json({ success: false, message: "Email already exists", data: {} });
+        }
+
         if (!email.endsWith('@stud.ase.ro')) {
             return res.status(400).json({ success: false, message: "Email is invalid", data: {} });
         }
+
 
         const user = await User.create({
             username: username,

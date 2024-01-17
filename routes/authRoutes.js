@@ -53,7 +53,7 @@ router.post('/login', async function (req, res) {
         }
 
         const uniqueSecret = `${process.env.TOKEN_SECRET}_${Date.now()}`;
-        
+
         const token = jwt.sign({ id: user.dataValues.id }, uniqueSecret, {
             expiresIn: '1h'
         });
@@ -68,6 +68,8 @@ router.post('/login', async function (req, res) {
         handleErrorResponse(res, error, 'Error login user');
     }
 });
+
+
 
 router.post('/check', async function (req, res) {
     const token = req.body.token;
